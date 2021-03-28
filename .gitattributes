@@ -1,6 +1,6 @@
-/data_in_progress/city_bikes.geojson filter=lfs diff=lfs merge=lfs -text
-/data_in_progress/city_bounds.geojson filter=lfs diff=lfs merge=lfs -text
-/data_in_progress/ct_shp_city1.geojson filter=lfs diff=lfs merge=lfs -text
+data_in_progress/city_bikes.geojson filter=lfs diff=lfs merge=lfs -text
+data_in_progress/city_bounds.geojson filter=lfs diff=lfs merge=lfs -text
+data_in_progress/ct_shp_city1.geojson filter=lfs diff=lfs merge=lfs -text
 data_raw/city_bike_lanes/salt_lake_city_1 filter=lfs diff=lfs merge=lfs -text
 data_raw/city_bike_lanes/detroit_2 filter=lfs diff=lfs merge=lfs -text
 data_raw/city_bike_lanes/milwaukee_1 filter=lfs diff=lfs merge=lfs -text
