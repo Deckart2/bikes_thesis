@@ -6,6 +6,6 @@ data_raw/city_bike_lanes/detroit_2 filter=lfs diff=lfs merge=lfs -text
 data_raw/city_bike_lanes/milwaukee_1 filter=lfs diff=lfs merge=lfs -text
 data_raw/city_bike_lanes/salt_lake_city_2 filter=lfs diff=lfs merge=lfs -text
 data_raw/city_bike_lanes/san_francisco filter=lfs diff=lfs merge=lfs -text
-data_raw/census_ipums_ct3 filter=lfs diff=lfs merge=lfs -text
-data_raw/census_ipums_ct_shp3 filter=lfs diff=lfs merge=lfs -text
+data_raw/census_ipums_ct3/ filter=lfs diff=lfs merge=lfs -text
+data_raw/census_ipums_ct_shp3/ filter=lfs diff=lfs merge=lfs -text
 data_raw/city_bounds/Kansas/City filter=lfs diff=lfs merge=lfs -text
