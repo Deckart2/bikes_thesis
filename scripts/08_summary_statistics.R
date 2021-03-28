@@ -3,39 +3,66 @@
 library(tidyverse)
 library(tidylog)
 library(sf)
+library(gridExtra)
+library(scales)
+
 
 ct <- read.csv("data_in_progress/ct_with_bike_clean.csv") %>%
   select(-X) 
   
+
 #Summary Tables ====
 #Table that shows mean of each lane type grouped by gentrification type
 gent_type <- ct %>%
   group_by(gent_status) %>%
-  summarize(mean(total_lane_rate, na.rm=T), 
-            mean(separated_path_rate, na.rm=T),
-            mean(protected_lane_rate, na.rm=T),
-            mean(painted_lane_rate, na.rm=T),
-            mean(bvld_rate, na.rm=T), 
-            mean(shared_lane_rate, na.rm=T),
-            mean(unknown_rate, na.rm=T))
+  summarize(total_lane_rate = mean(total_lane_rate, na.rm=T), 
+            separated_path_rate = mean(separated_path_rate, na.rm=T),
+            protected_lane_rate = mean(protected_lane_rate, na.rm=T),
+            painted_lane_rate = mean(painted_lane_rate, na.rm=T),
+            bvld_rate = mean(bvld_rate, na.rm=T), 
+            shared_lane_rate = mean(shared_lane_rate, na.rm=T),
+            unknown_rate = mean(unknown_rate, na.rm=T)) %>%
+  select(-unknown_rate) %>%
+  filter(gent_status != "NA")
+  
+
 
 #Table that shows total lane/area for gent type and region 
 gent_region <- ct %>%
   group_by(gent_status, city_region) %>% 
   summarize(mean_total_lane_rate = mean(total_lane_rate, na.rm=T)) %>%
-  pivot_wider(names_from = gent_status, values_from = mean_total_lane_rate)
-  
+  pivot_wider(names_from = gent_status, values_from = mean_total_lane_rate) %>%
+  select(-c("NA")) %>%
+  mutate(across(advantaged:not_gentrifying, scientific))
+
+
+write.table(gent_region, file="summary_tables/gent_region.txt",
+            sep = ",", row.names = F, quote=F)
+
+
 #Table that shows total lane/area for gent_type and city size
 gent_size <- ct %>%
   group_by(gent_status, city_size) %>% 
   summarize(mean_total_lane_rate = mean(total_lane_rate, na.rm=T)) %>%
-  pivot_wider(names_from = gent_status, values_from = mean_total_lane_rate) 
+  pivot_wider(names_from = gent_status, values_from = mean_total_lane_rate) %>%
+  select(-c("NA")) %>%
+  mutate(across(advantaged:not_gentrifying, scientific))
+
+write.table(gent_size, file="summary_tables/gent_size.txt",
+            sep = ",", row.names = F, quote=F)
+
 
 #Table that shows total lane distance for gent_type and each city
 gent_city <- ct %>%
   group_by(gent_status, city) %>%
   summarize(mean_total_lane_rate = mean(total_lane_rate, na.rm=T)) %>%
-  pivot_wider(names_from = gent_status, values_from = mean_total_lane_rate) 
+  pivot_wider(names_from = gent_status, values_from = mean_total_lane_rate) %>%
+  select(-c("NA")) %>%
+  replace_na(list(gentrifying = 0)) %>%
+  mutate(across(advantaged:not_gentrifying, scientific))
+
+write.table(gent_city, file="summary_tables/gent_city.txt", 
+                sep = ",", row.names=F, quote=F)
 
 #Statistical summaries:
 
