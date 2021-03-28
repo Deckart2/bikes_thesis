@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+    <idinfo>
+        <citation>
+            <citeinfo>
+                <title>Council Districts</title>
+                <onlink>http://gisrevprxy.seattle.gov/arcgis/rest/services/SPU_EXT/CouncilDistricts/MapServer/0</onlink>
+            </citeinfo>
+        </citation>
+        <descript>
+            <abstract>Represents the seven districts from which Seattle City Councilmembers will be elected from.</abstract>
+            <purpose>Represents the seven districts from which Seattle City Councilmembers will be elected from.</purpose>
+        </descript>
+        <keywords>
+            <theme>
+                <themekt>None</themekt>
+                <themekey>council district</themekey>
+                <themekey>voting</themekey>
+                <themekey>election</themekey>
+                <themekey>GIS</themekey>
+                <themekey>boundaries</themekey>
+                <themekey>seattle</themekey>
+                <themekey>wa</themekey>
+            </theme>
+        </keywords>
+        <accconst>None</accconst>
+        <useconst>Public Use</useconst>
+        <datacred>City of Seattle</datacred>
+    </idinfo>
+    <metainfo>
+        <metd>20170823</metd>
+        <metc>
+            <cntinfo>
+                <!--no contact person or organization name available-->
+            </cntinfo>
+        </metc>
+        <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+        <metstdv>FGDC-STD-001-1998</metstdv>
+        <mettc>local time</mettc>
+    </metainfo>
+</metadata>
