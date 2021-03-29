@@ -26,7 +26,7 @@ city_list <- sort(unique(ct_with_bike$city))
 #Process City Centers:
 #Use the 1982 census locations if they exist and the ArcGis locations otherwise
 city_centers <- city_centers %>%
-  select("city" = "place", "cbd_retail_lat", "cbd_retail_long", "arcgis_lat", "arcgis_long") %>%
+  select("city" = "place", "cbd_retail_lat", "cbd_retail_long", "arcgis_lat", "arcgis_long", pop2k) %>%
   mutate(lat = case_when(
     !is.na(cbd_retail_lat) ~ cbd_retail_lat, 
     is.na(cbd_retail_lat) ~ arcgis_lat)) %>%
@@ -36,8 +36,10 @@ city_centers <- city_centers %>%
   )) %>%
   mutate(city = replace(city, city == "Saint Louis", "St. Louis")) %>% #respell st. louis
   as.data.frame() %>%
-  filter(city %in% city_list) %>%  
-  slice(-c(10, 12, 13, 23, 40, 45, 47)) #Remove duplicate named cities that aren't ones being studied
+  filter(city %in% city_list)%>%
+  arrange(desc(pop2k)) 
+  
+city_centers <- city_centers[ !duplicated(city_centers$city), ]#Remove duplicate named cities that aren't ones being studied
 
 #Add St. Paul because it wasn't in the data given
 #Just googled St. Paul City Hall and put in lat-long from Google Maps
@@ -46,6 +48,7 @@ st_paul_row <- data.frame(city="St. Paul",
                           cbd_retail_long= NA,
                           arcgis_lat = NA,
                           arcgis_long = NA,
+                          pop2k = 1,
                           lat = 44.94443574873054,
                           long = -93.09397465986572) 
 city_centers <- rbind(city_centers, st_paul_row)

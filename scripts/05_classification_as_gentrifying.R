@@ -51,7 +51,15 @@ ct_data <- ct_data %>%
   mutate(is_gentrifying = case_when(
     gent_status == "gentrifying" ~ 1, 
     TRUE ~ 0
-  ))
+  )) %>%
+  mutate(is_advantaged = case_when(
+    gent_status == "advantaged" ~ 1,
+    TRUE ~ 0
+  )) %>%
+  mutate(is_not_gentrifying = case_when(
+    gent_status == "not_gentrifying" ~ 1, 
+    TRUE ~ 0))
+
 
 
 #Write:
