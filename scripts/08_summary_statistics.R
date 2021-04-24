@@ -25,12 +25,11 @@ gent_type <- ct %>%
             unknown_rate = mean(unknown_rate, na.rm=T)) %>%
   select(-unknown_rate) %>%
   filter(gent_status != "NA") %>%
-  mutate(across(total_lane_rate:shared_lane_rate, scientific))
+  mutate(across(total_lane_rate:shared_lane_rate, round, 1))
 gent_type <- t(gent_type)
-gent_type <- row_to_names(gent_type, 1)
 
 write.table(gent_type, file="summary_tables/gent_type.txt",
-            sep = ",", row.names = T, col.names = T, quote=F)
+            sep = ",", row.names = T, col.names = F, quote=F)
 
 
 #Pairwise t test to test for significance:
@@ -98,8 +97,7 @@ gent_region <- ct %>%
   summarize(mean_total_lane_rate = mean(total_lane_rate, na.rm=T)) %>%
   pivot_wider(names_from = gent_status, values_from = mean_total_lane_rate) %>%
   select(-c("NA")) %>%
-  mutate(across(advantaged:not_gentrifying, scientific))
-
+  mutate(across(advantaged:not_gentrifying, round, 1))
 
 write.table(gent_region, file="summary_tables/gent_region.txt",
             sep = ",", row.names = F, quote=F)
@@ -112,7 +110,7 @@ gent_size <- ct %>%
   summarize(mean_total_lane_rate = mean(total_lane_rate, na.rm=T)) %>%
   pivot_wider(names_from = gent_status, values_from = mean_total_lane_rate) %>%
   select(-c("NA")) %>%
-  mutate(across(advantaged:not_gentrifying, scientific))
+  mutate(across(advantaged:not_gentrifying, round, 1))
 
 write.table(gent_size, file="summary_tables/gent_size.txt",
             sep = ",", row.names = F, quote=F)
@@ -121,7 +119,7 @@ write.table(gent_size, file="summary_tables/gent_size.txt",
 #Table that shows total lane distance for gent_type and each city
 #Table 3
 gent_city <- ct %>%
-  group_by(gent_status, city) %>%
+  group_by(gent_status, city, city_size, city_region) %>%
   summarize(mean_total_lane_rate = mean(total_lane_rate, na.rm=T)) %>%
   pivot_wider(names_from = gent_status, values_from = mean_total_lane_rate) %>%
   select(-c("NA")) %>%
@@ -135,15 +133,12 @@ write.table(gent_city, file="summary_tables/gent_city.txt",
 
 
 #Gentrification Summary Statistics =====
-#Table in appendix
-gent_sum <- ct %>%
-  group_by(city) %>%
-  count(gent_status) %>%
-  pivot_wider(names_from = "gent_status", values_from = "n") %>%
-  select(-"NA")
-gent_sum[2:4] <- gent_sum[-1]/rowSums(gent_sum[-1], na.rm=TRUE)
-gent_sum <- gent_sum %>%
-  mutate(across(advantaged:not_gentrifying, scientific))
+#Table in appendix: Individual Cities' mean rates of bicycle infrastructure by gent status
+gent_sum <- ct_no_unknown %>%
+  group_by(city, gent_status) %>%
+  summarize(mean_total_lane_rate = mean(total_lane_rate)) %>%
+  pivot_wider(names_from = "gent_status", values_from = "mean_total_lane_rate") %>%
+  mutate(across(advantaged:not_gentrifying, round, 1))
 
 write.table(gent_sum, file="summary_tables/gent_sum.txt", 
             sep = ",", row.names=F, quote=F)
@@ -177,13 +172,14 @@ whole_data <- pairwise.t.test(ct_no_unknown$total_lane_rate, ct_no_unknown$gent_
                 alternative = "two.sided")
 whole_data
 
+regions <- unique(ct$city_region)
 run_pairwise_t  <- function(region_or_city_size) {
   if (region_or_city_size %in% regions){
-    df <- not_ad %>% 
+    df <- ct_no_unknown %>% 
       filter(city_region == region_or_city_size)
   }
   else{
-    df <- not_ad %>% 
+    df <- ct_no_unknown %>% 
       filter(city_size == region_or_city_size)
   }
   results <-pairwise.t.test(df$total_lane_rate, df$gent_status,
@@ -228,4 +224,36 @@ median_dist <- median_area_ct * median_ratio
 #Size of tract:
 soccer_field <- 7140
 soc_fields_per_tract <- median_area_ct / soccer_field
+
+
+#Relative difference in gent v disadvantaged ======
+
+gent_city <- gent_city %>%
+  mutate(across(advantaged:not_gentrifying, as.numeric)) %>%
+  mutate(pct_dif_gent_disadvantaged = (gentrifying-not_gentrifying)/gentrifying) %>%
+  mutate(pct_dif_gent_advantaged = (gentrifying-advantaged)/gentrifying)
+
+gent_city_gent_v_dis <- arrange(gent_city, pct_dif_gent_disadvantaged)
+gent_city_gent_v_dis$row_num <- 1:nrow(gent_city)
+
+gent_dis <- ggplot(gent_city_gent_v_dis, aes(y=pct_dif_gent_disadvantaged, x = row_num, fill = city_size)) +
+  geom_bar(position="dodge", stat="identity") + 
+  labs(x = "City", 
+       y = "Percent Difference",
+       title = "Percent Difference in Disadvantaged and Gentrifying Cycling Infrastructure") +
+  theme_classic() 
+
+gent_city_gent_v_ad <- arrange(gent_city, pct_dif_gent_advantaged)
+gent_city_gent_v_ad$row_num <- 1:nrow(gent_city)
+
+
+gent_ad <- ggplot(gent_city_gent_v_ad, aes(y=pct_dif_gent_advantaged, x = row_num, , fill = city_size)) +
+  geom_bar(position="dodge", stat="identity") + 
+  labs(x = "City", 
+       y = "Percent Difference",
+       title = "Percent Difference in Advantaged and Gentrifying Cycling Infrastructure") +
+  theme_classic() 
+
+combined <- cbind(gent_dis, gent_ad)
+
 

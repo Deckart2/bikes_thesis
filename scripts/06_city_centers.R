@@ -80,9 +80,10 @@ ct_shp_centroids <- ct_shp_centroids %>%
   mutate(dist_to_cbd = st_distance(geometry.x, geometry.y, by_element = TRUE)) %>%
   select(gisjoin, dist_to_cbd)
 
-#Add back to main data:
+#Add back to main data and convert to km:
 ct_with_bike <- left_join(ct_with_bike, ct_shp_centroids) %>%
-  select(-c(X, X.1))
+  select(-c(X, X.1)) %>%
+  mutate(dist_to_cbd_km = dist_to_cbd/1000)
 
 #write:
 write.csv(ct_with_bike, "data_in_progress/ct_with_bike.csv")

@@ -214,17 +214,18 @@ ct_w_bikes <- left_join(ct_shp_city1, bike_lanes_split1, by = c("GISJOIN" = "gis
   left_join(ct_2010_2019)
 
 
-#Add Spatial Area Component
+#Add Spatial Area Component and overall rates:
+#Note the multiply by 10^6th converts the units from m/m^2 to m/km^2
 ct_w_bikes$area <- st_area(ct_w_bikes)
 ct_w_bikes <- ct_w_bikes %>%
-  mutate(painted_lane_rate = painted_lane/area) %>%
-  mutate(shared_lane_rate = shared_lane/area) %>%
-  mutate(separated_path_rate = separated_path/area) %>%
-  mutate(bvld_rate = bvld/area) %>%
-  mutate(unknown_rate = unknown/area) %>%
-  mutate(protected_lane_rate = protected_lane/area) %>%
-  mutate(total_lane_rate = total_lane_dist/area) %>%
-  replace_na(list(total_lane_rate = 0))
+  mutate(painted_lane_rate = painted_lane/area*1000000) %>%
+  mutate(shared_lane_rate = shared_lane/area*1000000) %>%
+  mutate(separated_path_rate = separated_path/area*1000000) %>%
+  mutate(bvld_rate = bvld/area*1000000) %>%
+  mutate(unknown_rate = unknown/area*1000000) %>%
+  mutate(protected_lane_rate = protected_lane/area*1000000) %>%
+  mutate(total_lane_rate = total_lane_dist/area*1000000) %>%
+  replace_na(list(total_lane_rate = 0*1000000))
   select(-c(painted_lane, shared_lane, separated_path, bvld, protected_lane,
             unknown, total_lane_dist))
 

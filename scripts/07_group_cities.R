@@ -52,6 +52,6 @@ ct <- ct %>%
     total_lane_rate > 0 ~ 1,
     TRUE ~ 0
   )) %>%
-  mutate(pop_density = tot_pop_2019/area)
+  mutate(pop_density = tot_pop_2019/area*1000000) #pop density in people/sq km
 
 write.csv(ct, "data_in_progress/ct_with_bike_clean.csv")
