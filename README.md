@@ -9,5 +9,5 @@ A copy of the thesis can be found in the repo [here](https://github.com/Deckart2
 
 If you have any questions, please do not hestitate to reach out to me at gdmorrison [at] uchicago . edu. 
 
-###Repo Organization:
+### Repo Organization:
 Scripts are found in the scripts folder and written to be run in order of prefix ``00`` onwards. 
